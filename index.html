@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Actividad 1: Streaming en la Web</title>
+    <link
+      href="font/fontawesome-free-5.15.3-web/css/all.css"
+      rel="stylesheet"
+    />
+    <link href="styles.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>Reproductor multimedia</h1>
+    <h2>Luis Emilio Velasco Sánchez</h2>
+
+    <div class="container">
+      <div class="player">
+        <div class="video-container">
+          <video id="videoPlayer" controls preload="none" poster="">
+            <source id="videoSource" src="" type="video/webm" />
+            <track
+              id="captionsSpanish"
+              label="Español"
+              kind="subtitles"
+              srclang="es"
+              src=""
+              default
+            />
+            <track
+              id="captionsEnglish"
+              label="English"
+              kind="subtitles"
+              srclang="en"
+              src=""
+            />
+            <p>Tu navegador no soporta vídeos HTML</p>
+          </video>
+          <div class="controls">
+            <button onclick="prevVideo()">
+              <i class="fas fa-step-backward"></i>
+            </button>
+
+            <button onclick="videoPlayer.playbackRate=.5">.5x</button>
+            <button onclick="videoPlayer.playbackRate=1">1x</button>
+            <button onclick="videoPlayer.playbackRate=2">2x</button>
+
+            <button onclick="downloadScreenshot()">
+              <i class="fas fa-image"></i>
+            </button>
+
+            <button onclick="nextVideo()">
+              <i class="fas fa-step-forward"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="playlist">
+        <h3>Videos relacionados</h3>
+        <button class="side-video" onclick="playVideo(0);">
+          <img src="videos/sintel/poster.png" alt="Video 1" />
+          <span>Sintel</span>
+        </button>
+
+        <button class="side-video" onclick="playVideo(1);">
+          <img src="videos/bunny/poster.png" alt="Video 2" />
+          <span>Bunny</span>
+        </button>
+
+        <button class="side-video" onclick="playVideo(2);">
+          <img src="videos/spring/poster.png" alt="Video 3" />
+          <span>Spring</span>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const videoNames = ["sintel", "bunny", "spring"];
+
+      function playVideo(id) {
+        const videoNum =
+          id < 0 ? videoNames.length - 1 : id % videoNames.length;
+        currentVideo = videoNum;
+        const name = videoNames[videoNum];
+
+        videoPlayer.setAttribute("poster", `videos/${name}/poster.png`);
+        videoSource.setAttribute("src", `videos/${name}/video.webm`);
+        captionsSpanish.setAttribute("src", `videos/${name}/captions/es.vtt`);
+        captionsEnglish.setAttribute("src", `videos/${name}/captions/en.vtt`);
+        videoPlayer.load();
+      }
+
+      let currentVideo = 0;
+
+      function nextVideo() {
+        currentVideo++;
+        playVideo(currentVideo);
+      }
+
+      function prevVideo() {
+        currentVideo--;
+        playVideo(currentVideo);
+      }
+
+      function downloadScreenshot() {
+        const screenCapture = document.createElement("canvas");
+        screenCapture.width = videoPlayer.videoWidth;
+        screenCapture.height = videoPlayer.videoHeight;
+
+        const context = screenCapture.getContext("2d");
+        context.drawImage(
+          videoPlayer,
+          0,
+          0,
+          screenCapture.width,
+          screenCapture.height
+        );
+
+        const a = document.createElement("a");
+        a.download = "screenshot.png";
+        a.href = screenCapture.toDataURL("image/png");
+        console.log(screenCapture.toDataURL("image/png"));
+        a.click();
+      }
+
+      playVideo(0);
+    </script>
+  </body>
+</html>
